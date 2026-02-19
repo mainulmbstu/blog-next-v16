@@ -1,6 +1,5 @@
 "use client";
 
-import { revalidatePath } from "next/cache";
 import { Action } from "./action";
 import SubmitButton from "@/lib/components/SubmitButton";
 import Form from "next/form";
