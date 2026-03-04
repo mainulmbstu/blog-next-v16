@@ -21,13 +21,17 @@ const VerifyEmail = async ({ searchParams }) => {
     await dbConnect();
     const user = await UserModel.findById(tokenData?.id);
     if (user) {
+     if (new Date() > user?.verifyTokenExpire) {
+            message =
+        "email verification failed, may be due to token validity expired, please register again";
+            } else {
       user.isVerified = true;
       if (user.verifyTokenExpire) user.verifyTokenExpire = undefined;
       await user.save();
       message = "email verified successfully";
       success = true;
-      // revalidatePath("/dashboard", "layout");
-      updateTag("user-list");
+     
+    }
     } else {
       message =
         "email verification failed, may be due to token validity expired, please register again";

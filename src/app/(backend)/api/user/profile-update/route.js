@@ -43,18 +43,15 @@ export async function POST(req) {
     (await cookies()).delete("token");
     (await cookies()).delete("userInfo");
     await userExist.save();
-    // revalidatePath("/", "layout");
-    revalidateTag("user-list", "max");
-    // revalidateTag("user-list", { expire: 0 });
-    // console.log(userExist);
+  
     let credential = {
       email,
       subject: "Profile Update ",
       body: `<h2>Hi ${userExist?.name},</h2>
-      <h3>Your profile has been Updated successfully.
+      <h3>Your profile  in ${process.env.BASE_URL} has been Updated successfully.</h3>
       Thanks for staying with us`,
     };
-    mailer(credential);
+    await mailer(credential);
 
     return Response.json({
       success: true,
@@ -63,5 +60,10 @@ export async function POST(req) {
   } catch (error) {
     console.log(error);
     return Response.json({ message: await getErrorMessage(error) });
+  } finally {
+      // revalidatePath("/", "layout");
+    revalidateTag("user-list", "max");
+    // revalidateTag("user-list", { expire: 0 });
+    // console.log(userExist);
   }
 }
