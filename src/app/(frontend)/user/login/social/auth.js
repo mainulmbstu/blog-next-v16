@@ -40,7 +40,9 @@ export const {
 //====================================================
 export const socialLogin = async (formData) => {
   let action = formData.get("action");
-  await signIn(action, { redirectTo: "/" });
+  await signIn(action);
+
+  // await signIn(action, { redirectTo: "/" });
 };
 //====================================================
 export const doLogout = async () => {

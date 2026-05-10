@@ -12,49 +12,38 @@ export const loginAction = async (formData) => {
   //   setTimeout(resolve, 5000)
   // })
 
+  let google = formData.get("google");
   let email = formData.get("email");
   let password = formData.get("password");
   let tokenExpire = 24 * 60 * 60;
   // in seconds
+  await dbConnect();
   try {
-    if (!email || !password) {
-      throw new Error("Please enter all required fields");
+    if (!google) {
+      if (!email || !password)
+        throw new Error("Please enter all required fields");
     }
-    await dbConnect();
     const user = await UserModel.findOne({ email });
-    if (!user) {
-      throw new Error("User does not exist");
+    if (!user) throw new Error("User does not exist");
+
+    if (!google) {
+      let passMatch = await bcrypt.compare(password, user.password);
+      if (!passMatch) throw new Error("Wrong credentials");
     }
-    if (!user.isVerified) {
-      throw new Error("Email is not verified");
-    }
-    let passMatch = await bcrypt.compare(password, user.password);
-    if (!passMatch) {
-      throw new Error("Wrong credentials");
-    }
+
+    if (!user.isVerified) throw new Error("Email is not verified");
+
     const userInfo = await UserModel.findOne({ email }, { password: 0 });
     let token = jwt.sign(
       { userInfo, loginExpireTime: Date.now() + tokenExpire * 1000 },
       process.env.JWT_KEY,
     );
-    // let token = jwt.sign(
-    //   { id: user?._id, email: user?.email, role: user?.role },
-    //   process.env.JWT_KEY
-    // );
+
     (await cookies()).set("token", token, {
       // httpOnly: true,
       maxAge: tokenExpire,
     }); // expiry time in second
-    // (await cookies()).set("loginExpireTime", Date.now() + tokenExpire * 1000, {
-    //   maxAge: tokenExpire,
-    // });
-    // expiry time in second
-    // (await cookies()).set("userInfo", JSON.stringify(userInfo), {
-    //   // httpOnly: true,
-    //   maxAge: 3600 * 24,
-    // }); // expiry time in second
-    // revalidatePath("/", "layout");
-    // redirect("/cart");
+
     return {
       success: true,
       message: `Login successful `,

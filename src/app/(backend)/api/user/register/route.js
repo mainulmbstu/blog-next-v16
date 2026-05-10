@@ -19,20 +19,49 @@ export async function POST(req) {
   // })
   let formData = await req.formData();
 
+  let google = formData.get("google");
+  let googleImage = formData.get("googleImage");
+
   let id = formData.get("id");
   let name = formData.get("name");
   let email = formData.get("email");
   let password = formData.get("password");
   //for image
   let file = formData.get("file");
+  await dbConnect();
   try {
+    if (google) {
+      if (!name || !email) {
+        throw new Error("All fields are required");
+      }
+      const userExist = await UserModel.findOne({ email });
+      if (userExist) {
+        return Response.json({
+          success: true,
+          message: `User already registered with this email`,
+        });
+      }
+      let allUser = await UserModel.find({}).estimatedDocumentCount();
+      await UserModel.create({
+        name,
+        email,
+        role: allUser ? "user" : "admin",
+        isVerified: true,
+        picture: googleImage && { secure_url: googleImage },
+      });
+      return Response.json({
+        success: true,
+        message: `User registered successfully`,
+      });
+    }
+    //=================
     if (!id) {
       let expireHour = 1;
       // in hour
       if (!name || !email || !password) {
         throw new Error("All fields are required");
       }
-      await dbConnect();
+
       const userExist = await UserModel.findOne({ email });
       if (userExist) {
         if (new Date() > userExist?.verifyTokenExpire) {
@@ -87,7 +116,6 @@ export async function POST(req) {
         message: `Registration successful, a verification link has been sent to ${email}, please verify email to access your account `,
       });
     } else {
-      await dbConnect();
       const userExist = await UserModel.findOne({ email });
       if (!userExist) {
         throw new Error("User not found");

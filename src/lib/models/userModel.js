@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
     email: { type: String, unique: true, required: true },
-    password: { type: String, required: true },
+    password: { type: String },
     role: { type: String, default: "user" },
     isVerified: { type: Boolean, default: false },
     verifyTokenExpire: { type: Date },
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
       public_id: { type: String },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const UserModel =

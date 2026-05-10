@@ -1,11 +1,31 @@
+"use client";
+
 import SubmitButton from "@/lib/components/SubmitButton";
-import { doLogout, socialLogin } from "./auth";
-import { auth } from "./auth";
+import { auth, socialLogin } from "./auth";
+import { useEffect } from "react";
+import { Axios } from "@/lib/helpers/AxiosInstance";
 
-const SocialLoginPage = async () => {
-  let session = await auth();
-  console.log(session);
+const SocialLoginPage = ({ clientAction }) => {
+  let loginWithGmail = async () => {
+    let gooleData = await auth();
 
+    if (!gooleData) return;
+    let formData = new FormData();
+    formData.append("google", "google" || "");
+    formData.append("name", gooleData?.user?.name || "");
+    formData.append("email", gooleData?.user?.email || "");
+    formData.append("googleImage", gooleData?.user?.image || "");
+
+    let { data } = await Axios.post("/api/user/register", formData);
+    if (data?.success) {
+      clientAction(formData);
+    }
+  };
+  useEffect(() => {
+    loginWithGmail();
+  }, []);
+
+  // console.log(session);
   return (
     <div className=" m-2 ">
       <form action={socialLogin}>
@@ -22,11 +42,6 @@ const SocialLoginPage = async () => {
             title={"Sign in with github"}
             design={"btn-black w-full"}
           />
-        </div>
-      </form>
-      <form action={doLogout}>
-        <div className="mt-3">
-          <SubmitButton title={"Logout"} design={"btn-error  cursor-pointer"} />
         </div>
       </form>
     </div>

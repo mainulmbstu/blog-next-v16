@@ -1,5 +1,4 @@
 import LoginForm from "./LoginForm";
-import SocialLoginPage from "./social/SocialLogin";
 
 export const metadata = {
   title: "Login",
@@ -9,9 +8,7 @@ export const metadata = {
 const Login = async () => {
   return (
     <div>
-      <LoginForm>
-        <SocialLoginPage />
-      </LoginForm>
+      <LoginForm />
     </div>
   );
 };

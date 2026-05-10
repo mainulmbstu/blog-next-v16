@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { getTokenData } from "../helpers/getTokenData";
 import { useRouter } from "next/navigation";
 import { swalModal } from "../helpers/swalModal";
+import { signOut } from "@/app/(frontend)/user/login/social/auth";
 
 export const AuthContext = createContext();
 
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   let logout = () => {
+    signOut();
     Cookies.remove("token");
     setUserInfo(null);
     setToken(null);
