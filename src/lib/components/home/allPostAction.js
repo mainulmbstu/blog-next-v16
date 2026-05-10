@@ -17,7 +17,6 @@ export const allPostAction = async (keyword, page = 1, perPage) => {
     let author = await UserModel.find({
       name: { $regex: keyword, $options: "i" },
     });
-
     let authIdArr = author?.length && author.map((item) => item._id);
     const total = await PostModel.find({
       $or: [
@@ -35,7 +34,7 @@ export const allPostAction = async (keyword, page = 1, perPage) => {
     })
       // .populate({ path: "category", select: "name", model: CategoryModel })
       // .populate("category", "name", CategoryModel)
-      .populate("user", "-password")
+      .populate("user", "-password", UserModel)
       .skip(skip)
       .limit(perPage)
       .sort({ createdAt: -1 });

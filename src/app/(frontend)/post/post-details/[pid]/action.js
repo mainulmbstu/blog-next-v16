@@ -6,18 +6,18 @@ import {
 } from "@/lib/helpers/cloudinary";
 import dbConnect from "@/lib/helpers/dbConnect";
 import { getErrorMessage } from "@/lib/helpers/getErrorMessage";
-import { getCookieValue } from "@/lib/helpers/helperFunction";
 import { CommentModel } from "@/lib/models/CommentModel";
 import { LikeModel } from "@/lib/models/LikeModel";
 import { PostModel } from "@/lib/models/PostModel";
 import { revalidatePath, updateTag } from "next/cache";
 import { getTokenData } from "@/lib/helpers/getTokenData";
-
-export const postDetailsAction = async (pid) => {
+import { getCookieValue } from "@/lib/helpers/getCookieValue";
+//===========================
+export const detailsAction = async (pid) => {
   try {
     await dbConnect();
     const post = await PostModel.findById(pid).populate("user", "-password");
-    return { postDetails: post };
+    return { details: post };
   } catch (error) {
     console.log(error);
     return { message: await getErrorMessage(error) };
@@ -44,7 +44,7 @@ export const similarPostAction = async (pid) => {
 };
 //===========================
 export const likeStatusAction = async (pid) => {
-  let userInfo = await getTokenData(await getCookieValue("token"));
+  let { userInfo } = await getTokenData(await getCookieValue("token"));
 
   try {
     await dbConnect();
@@ -60,7 +60,7 @@ export const likeStatusAction = async (pid) => {
 };
 //================================
 export const likeAction = async (pid) => {
-  let userInfo = await getTokenData(await getCookieValue("token"));
+  let { userInfo } = await getTokenData(await getCookieValue("token"));
   try {
     await dbConnect();
     if (!pid) {
@@ -85,75 +85,73 @@ export const likeAction = async (pid) => {
 };
 
 //=====================================
-export const commentAction = async (pid, comment, parentId) => {
-  let userInfo = await getTokenData(await getCookieValue("token"));
+export const commentAction = async (formData) => {
+  let { userInfo } = await getTokenData(await getCookieValue("token"));
+  let comment = formData.get("comment");
+  let pid = formData.get("pid");
+  let parentId = formData.get("parentId");
+  let cid = formData.get("cid");
 
   try {
+    if (!comment) {
+      throw new Error("Comment is required");
+    }
     await dbConnect();
-    let comm = new CommentModel();
-    comm.post = pid;
-    comm.comment = comment;
-    if (parentId) comm.parentId = parentId;
-    comm.user = userInfo?._id;
-    await comm.save();
-    let post = await PostModel.findById(pid);
-    post.comment = post?.comment + 1;
-    await post.save();
-    updateTag("comment-list");
+    if (!cid) {
+      let comm = new CommentModel();
+      comm.post = pid;
+      comm.comment = comment;
+      comm.user = userInfo?._id;
+      if (parentId) comm.parentId = parentId;
+      await comm.save();
+
+      let post = await PostModel.findById(pid);
+      post.comment = post?.comment + 1;
+      await post.save();
+      return { success: true, message: "Comment added successfully" };
+    } else {
+      const itemExist = await CommentModel.findById(cid);
+      if (!itemExist) throw new Error("Comment not found");
+      if (itemExist?.user?.toString() !== userInfo?._id?.toString()) {
+        throw new Error("You are not authorized to edit this comment");
+      }
+      if (comment) itemExist.comment = comment;
+
+      await itemExist.save();
+      return { success: true, message: "Comment updated successfully" };
+    }
   } catch (error) {
     console.log(error);
     return { message: await getErrorMessage(error) };
+  } finally {
+    updateTag("comment-list");
   }
 };
 //===========================================================
 export const deletePostAction = async (id = "") => {
+  let { userInfo } = await getTokenData(await getCookieValue("token"));
   try {
     await dbConnect();
-    const post = await PostModel.findByIdAndDelete(id);
-    post.picture?.public_id &&
-      (await deleteImageOnCloudinary(post.picture?.public_id));
+    const itemExist = await PostModel.findById(id);
+    if (!itemExist) {
+      throw new Error("Post not found");
+    }
+    if (
+      userInfo?.role !== "admin" &&
+      itemExist?.user?.toString() !== userInfo?._id?.toString()
+    ) {
+      throw new Error("You are not authorized to delete this.");
+    }
+    itemExist.picture?.public_id &&
+      (await deleteImageOnCloudinary(itemExist.picture?.public_id));
     await LikeModel.deleteMany({ post: id });
     await CommentModel.deleteMany({ post: id });
+    await PostModel.findByIdAndDelete(id);
     updateTag("post-list");
 
     return {
-      message: `${post?.title} has been deleted successfully`,
+      message: `${itemExist?.title} has been deleted successfully`,
       success: true,
-    };
-  } catch (error) {
-    console.log(error);
-    return { message: await getErrorMessage(error) };
-  }
-};
-
-//===========================================================
-export const editPostAction = async (pid, formData) => {
-  let title = formData.get("title");
-  let category = formData.get("category");
-  let post = formData.get("post");
-  let file = formData.get("file");
-
-  try {
-    await dbConnect();
-    const postExist = await PostModel.findById(pid);
-    if (file?.size) {
-      postExist.picture?.public_id &&
-        (await deleteImageOnCloudinary(postExist.picture?.public_id));
-      let { secure_url, public_id } = await uploadOnCloudinary(
-        file,
-        "blognextpost",
-      );
-      postExist.picture = { secure_url, public_id };
-    }
-    if (title) postExist.title = title;
-    if (category) postExist.category = category;
-    if (post) postExist.post = post;
-
-    await postExist.save();
-    updateTag("post-list");
-    return {
-      success: true,
-      message: `Post Updated successfully`,
     };
   } catch (error) {
     console.log(error);

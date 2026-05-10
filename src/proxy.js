@@ -3,7 +3,7 @@ import { getTokenData } from "./lib/helpers/getTokenData";
 
 export async function proxy(request) {
   let token = request.cookies.get("token")?.value; // get cookies
-  let userInfo = await getTokenData(token);
+  let { userInfo } = await getTokenData(token);
   // console.log(userInfo);
   let path = request.nextUrl.pathname;
   let search = request.nextUrl.searchParams;
