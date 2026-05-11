@@ -10,7 +10,6 @@ import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
-// import { useRouter, useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { swalModal } from "@/lib/helpers/swalModal";
 import SocialLoginPage from "./social/SocialLogin";
@@ -25,13 +24,12 @@ const LoginForm = () => {
     let data = await loginAction(formData);
     if (data?.success) {
       swalModal(data?.message);
-      // toast.success(data?.message);
+
       setToken(data?.token);
       setUserInfo(JSON.parse(data?.userInfo));
       router.push(lastPath ? lastPath : "/");
     } else {
       swalModal(data?.message, "error");
-      // toast.error(data?.message);
     }
   };
 
