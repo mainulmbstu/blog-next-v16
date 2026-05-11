@@ -47,7 +47,7 @@ const SocialLoginPage = ({ clientAction }) => {
           <SubmitButton
             value="facebook"
             title={"Sign in with facebook"}
-            design={"btn-primary w-full"}
+            design={"btn-blue w-full"}
           />
         </div>
       </form>

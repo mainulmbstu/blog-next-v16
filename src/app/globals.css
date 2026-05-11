@@ -180,6 +180,7 @@ th {
 
 @utility btn-blue {
     background-color: var(--color-blue-500);
+    color: white;
 }
 
 .btn-blue:hover {
