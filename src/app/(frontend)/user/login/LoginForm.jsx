@@ -34,7 +34,7 @@ const LoginForm = () => {
   };
 
   return (
-    <div className=" h-[89vh] grid md:grid-cols-2 place-items-center black-theme ">
+    <div className=" min-h-[89vh] grid md:grid-cols-2 place-items-center black-theme ">
       {/* <h3 className=" text-white">Login </h3> */}
       <div>
         <Image priority={true} src={loginImage} alt="" />
