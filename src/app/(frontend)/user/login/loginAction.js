@@ -5,17 +5,18 @@ import { getErrorMessage } from "@/lib/helpers/getErrorMessage";
 import { UserModel } from "@/lib/models/userModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { refresh, revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const loginAction = async (formData) => {
   // await new Promise(resolve => {
   //   setTimeout(resolve, 5000)
   // })
-
   let social = formData.get("social");
   let email = formData.get("email");
   let password = formData.get("password");
   let tokenExpire = 24 * 60 * 60;
+
   // in seconds
   await dbConnect();
   try {
@@ -43,7 +44,6 @@ export const loginAction = async (formData) => {
       // httpOnly: true,
       maxAge: tokenExpire,
     }); // expiry time in second
-
     return {
       success: true,
       message: `Login successful `,

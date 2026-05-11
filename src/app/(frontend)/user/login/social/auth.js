@@ -54,10 +54,6 @@ export const {
 export const socialLogin = async (formData) => {
   let action = formData.get("action");
   await signIn(action);
-
   // await signIn(action, { redirectTo: "/" });
 };
 //====================================================
-export const doLogout = async () => {
-  await signOut({ redirectTo: "/user/login" });
-};

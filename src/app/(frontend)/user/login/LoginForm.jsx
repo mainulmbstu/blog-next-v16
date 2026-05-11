@@ -3,8 +3,6 @@
 import { loginAction } from "./loginAction";
 import SubmitButton from "@/lib/components/SubmitButton";
 import Form from "next/form";
-import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import { useAuth } from "@/lib/components/context";
 import loginImage from "@/assets/login.svg";
 import Image from "next/image";
@@ -36,6 +34,7 @@ const LoginForm = () => {
       // toast.error(data?.message);
     }
   };
+
   return (
     <div className=" h-[89vh] grid md:grid-cols-2 place-items-center black-theme ">
       {/* <h3 className=" text-white">Login </h3> */}

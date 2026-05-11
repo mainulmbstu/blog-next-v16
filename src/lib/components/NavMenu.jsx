@@ -21,7 +21,7 @@ const NavMenu = () => {
   const [drop2, setdrop2] = useState(false);
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  let { userInfo, logout, setToken } = useAuth();
+  let { userInfo, logout } = useAuth();
 
   useEffect(() => {
     setMounted(true);

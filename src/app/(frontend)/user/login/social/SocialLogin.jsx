@@ -24,8 +24,6 @@ const SocialLoginPage = ({ clientAction }) => {
   useEffect(() => {
     loginWithSocial();
   }, []);
-
-  // console.log(session);
   return (
     <div className=" m-2 ">
       <form action={socialLogin}>
