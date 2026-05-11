@@ -12,7 +12,7 @@ const PostCard = async ({ item }) => {
   let { userInfo } = await getTokenData(await getCookieValue("token"));
   return (
     <div className="h-full my-2">
-      <div className=" shadow-xl h-full flex flex-col cursor-pointer hover:bg-zinc-400 bg-zinc-300 dark:bg-base-300 p-1">
+      <div className=" shadow-xl h-full flex flex-col cursor-pointer hover:bg-zinc-400 bg-zinc-300 dark:bg-gray-600 p-1">
         <figure className=" h-40 md:max-h-80 relative">
           <Image
             src={item?.picture?.secure_url}

@@ -5,13 +5,13 @@ import { getErrorMessage } from "@/lib/helpers/getErrorMessage";
 import { UserModel } from "@/lib/models/userModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { refresh, revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 export const loginAction = async (formData) => {
   // await new Promise(resolve => {
   //   setTimeout(resolve, 5000)
   // })
+
   let social = formData.get("social");
   let email = formData.get("email");
   let password = formData.get("password");
@@ -25,10 +25,14 @@ export const loginAction = async (formData) => {
         throw new Error("Please enter all required fields");
     }
     const user = await UserModel.findOne({ email });
+
     if (!user) throw new Error("User does not exist");
 
     if (!social) {
-      let passMatch = await bcrypt.compare(password, user.password);
+      let passMatch = await bcrypt.compare(
+        password,
+        user.password ?? process.env.JWT_KEY,
+      );
       if (!passMatch) throw new Error("Wrong credentials");
     }
 
