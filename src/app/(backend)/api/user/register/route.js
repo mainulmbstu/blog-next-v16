@@ -12,15 +12,12 @@ import {
   uploadOnCloudinary,
 } from "@/lib/helpers/cloudinary";
 import { revalidateTag } from "next/cache";
-
+//=======================================================
 export async function POST(req) {
-  // await new Promise(resolve => {
-  //   setTimeout(resolve, 5000)
-  // })
   let formData = await req.formData();
 
-  let google = formData.get("google");
-  let googleImage = formData.get("googleImage");
+  let social = formData.get("social");
+  let socialImage = formData.get("socialImage");
 
   let id = formData.get("id");
   let name = formData.get("name");
@@ -30,7 +27,7 @@ export async function POST(req) {
   let file = formData.get("file");
   await dbConnect();
   try {
-    if (google) {
+    if (social) {
       if (!name || !email) {
         throw new Error("All fields are required");
       }
@@ -47,7 +44,7 @@ export async function POST(req) {
         email,
         role: allUser ? "user" : "admin",
         isVerified: true,
-        picture: googleImage && { secure_url: googleImage },
+        picture: socialImage && { secure_url: socialImage },
       });
       return Response.json({
         success: true,

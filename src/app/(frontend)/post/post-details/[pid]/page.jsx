@@ -130,7 +130,7 @@ const PostDetails = async ({ params }) => {
                 <h4>Title: {details?.title} </h4>
                 <p className="flex">
                   <Link
-                    href={details?.user?.picture?.secure_url || "#"}
+                    href={details?.user?.picture?.secure_url || "/"}
                     target="_blank"
                   >
                     <Image
@@ -141,7 +141,7 @@ const PostDetails = async ({ params }) => {
                       className=" object-contain w-10 h-auto rounded-full me-3"
                       width={100}
                       height={100}
-                      src={details?.user?.picture?.secure_url}
+                      src={details?.user?.picture?.secure_url || "/"}
                     />{" "}
                   </Link>{" "}
                   <span className="mt-3">{details?.user?.name} </span>

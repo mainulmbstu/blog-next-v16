@@ -6,15 +6,15 @@ import { useEffect } from "react";
 import { Axios } from "@/lib/helpers/AxiosInstance";
 
 const SocialLoginPage = ({ clientAction }) => {
-  let loginWithGmail = async () => {
-    let gooleData = await auth();
+  let loginWithSocial = async () => {
+    let socialData = await auth();
 
-    if (!gooleData) return;
+    if (!socialData) return;
     let formData = new FormData();
-    formData.append("google", "google" || "");
-    formData.append("name", gooleData?.user?.name || "");
-    formData.append("email", gooleData?.user?.email || "");
-    formData.append("googleImage", gooleData?.user?.image || "");
+    formData.append("social", "social" || "");
+    formData.append("name", socialData?.user?.name || "");
+    formData.append("email", socialData?.user?.email || "");
+    formData.append("socialImage", socialData?.user?.image || "");
 
     let { data } = await Axios.post("/api/user/register", formData);
     if (data?.success) {
@@ -22,7 +22,7 @@ const SocialLoginPage = ({ clientAction }) => {
     }
   };
   useEffect(() => {
-    loginWithGmail();
+    loginWithSocial();
   }, []);
 
   // console.log(session);
@@ -41,6 +41,13 @@ const SocialLoginPage = ({ clientAction }) => {
             value="github"
             title={"Sign in with github"}
             design={"btn-black w-full"}
+          />
+        </div>
+        <div className="mt-3">
+          <SubmitButton
+            value="facebook"
+            title={"Sign in with facebook"}
+            design={"btn-primary w-full"}
           />
         </div>
       </form>

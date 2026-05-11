@@ -12,21 +12,21 @@ export const loginAction = async (formData) => {
   //   setTimeout(resolve, 5000)
   // })
 
-  let google = formData.get("google");
+  let social = formData.get("social");
   let email = formData.get("email");
   let password = formData.get("password");
   let tokenExpire = 24 * 60 * 60;
   // in seconds
   await dbConnect();
   try {
-    if (!google) {
+    if (!social) {
       if (!email || !password)
         throw new Error("Please enter all required fields");
     }
     const user = await UserModel.findOne({ email });
     if (!user) throw new Error("User does not exist");
 
-    if (!google) {
+    if (!social) {
       let passMatch = await bcrypt.compare(password, user.password);
       if (!passMatch) throw new Error("Wrong credentials");
     }
