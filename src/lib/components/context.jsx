@@ -12,7 +12,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState(null);
   const [token, setToken] = useState(Cookies.get("token"));
-  const [loginExpireTime, setLoginExpireTime] = useState(24 * 60 * 60 * 1000);
+  const [loginExpireTime, setLoginExpireTime] = useState(0);
+  // const [loginExpireTime, setLoginExpireTime] = useState(24 * 60 * 60 * 1000);
   let router = useRouter();
 
   let getUserInfo = async () => {
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  //================
   let logout = () => {
     signOut();
     Cookies.remove("token");
@@ -33,10 +35,9 @@ export const AuthProvider = ({ children }) => {
     router.refresh("/");
     swalModal("You have been logged out", "success", false);
   };
-  //====
   //=================================
   let autoLogout = () => {
-    // console.log(loginExpireTime - Date.now());
+    if (!loginExpireTime) return;
     const timeoutId = setTimeout(() => {
       logout();
     }, loginExpireTime - Date.now());
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
   };
   useEffect(() => {
     token && getUserInfo();
-    // autoLogout();
+    autoLogout();
   }, [token, loginExpireTime]);
   //=======================
 

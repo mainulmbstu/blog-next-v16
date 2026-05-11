@@ -44,7 +44,7 @@ const LoginForm = () => {
 
         <Form
           action={clientAction}
-          className=" p-4 w-full md:w-4/5 lg:w-3/5 bg-base-300 max-w-100 "
+          className=" p-4 w-full md:w-4/5 lg:w-3/5 bg-base-200 max-w-100 "
         >
           {/* <Image src='/login.svg' width={100} height={200} alt="" /> */}
           <div className="mt-3">
